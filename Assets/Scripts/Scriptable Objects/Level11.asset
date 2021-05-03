@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d4ea6be60901564a8e75779077241b5, type: 3}
+  m_Name: Level11
+  m_EditorClassIdentifier: 
+  level: 11
+  levelDescription: Output '11' if the last two symbols of the input are '11' or
+    output '0' in any other case
+  helpList:
+  - The expected output for the first input row is 1
+  - '-'
+  turingFact: The Turing Prize was established in 1966 for outstanding achievements
+    in the field of informatics.
+  exampleInputList:
+  - 1101011
+  - 010101
+  - 11
+  - 1111111
+  - 0000001
+  - 110
+  - 11111111110
+  - 000000011
+  exampleOutputList:
+  - 1
+  - 0
+  - 1
+  - 1
+  - 0
+  - 0
+  - 0
+  - 1

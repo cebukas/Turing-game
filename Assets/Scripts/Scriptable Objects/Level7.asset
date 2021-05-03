@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d4ea6be60901564a8e75779077241b5, type: 3}
+  m_Name: Level7
+  m_EditorClassIdentifier: 
+  level: 7
+  levelDescription: Output '1' if the input has three or more 0's or output '0' in
+    any other case
+  helpList:
+  - The expected output for the first input row is 1
+  - '-'
+  turingFact: "\u2981A defined Turing Machine is defined only when any final state
+    is reached with the given input. "
+  exampleInputList:
+  - 000
+  - 0001000
+  - 00
+  - 01100
+  - 01
+  - 11111111111
+  - 000000000
+  - 1010101
+  exampleOutputList:
+  - 1
+  - 1
+  - 0
+  - 1
+  - 0
+  - 0
+  - 1
+  - 1

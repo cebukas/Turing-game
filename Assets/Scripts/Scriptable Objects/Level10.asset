@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d4ea6be60901564a8e75779077241b5, type: 3}
+  m_Name: Level10
+  m_EditorClassIdentifier: 
+  level: 10
+  levelDescription: Output '1' if the first input symbol is equal to the last one
+    or output '0' in any other case
+  helpList:
+  - The expected output for the first input row is 1
+  - '-'
+  turingFact: "Turing completeness is a property of the system to simulate the Turing
+    Machine. Any programming language that fits the Turing completeness property
+    can theoretically perform all the tasks that a Turing machine would perform.
+    Almost all programming languages \u200B\u200Bmeet this feature if the problem
+    of infinite memory of the Turing machine is ignored."
+  exampleInputList:
+  - 11
+  - 00
+  - 100001
+  - 011111110
+  - 10101010
+  - 01010101
+  - 1111111111
+  - 00000000
+  exampleOutputList:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 0
+  - 0
+  - 1
+  - 1

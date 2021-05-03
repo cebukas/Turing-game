@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d4ea6be60901564a8e75779077241b5, type: 3}
+  m_Name: Level15
+  m_EditorClassIdentifier: 
+  level: 15
+  levelDescription: Output the value that is equal to the amount of 1's in the input
+  helpList:
+  - The expected output for the seventh  input row is 1010
+  - '-'
+  turingFact: "Alan Turing enjoyed running in his spare time, he even ran a marathon
+    only 11 minutes slower than that year\u2019s Olympic champion. Asked about running,
+    he replied that only intense running helps him distract from such hard and stressful
+    work. "
+  exampleInputList:
+  - 0
+  - 1
+  - 00100000
+  - 1100000
+  - 101010
+  - 1111
+  - 1111111111
+  - 000011111
+  exampleOutputList:
+  - 0
+  - 1
+  - 1
+  - 10
+  - 11
+  - 100
+  - 1010
+  - 101

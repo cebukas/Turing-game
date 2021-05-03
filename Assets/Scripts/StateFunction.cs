@@ -1,38 +1,49 @@
-﻿
-public struct StateFunction{
+﻿[System.Serializable]
+public struct StateFunction
+{
     private int outputState;
     private char triggerValue;
     private int triggerState;
     private char outputValue;
     private char action;
-    public int getOutputState(){
+    public int getOutputState()
+    {
         return this.outputState;
     }
-    public char getTriggerValue(){
+    public char getTriggerValue()
+    {
         return this.triggerValue;
     }
-    public int getTriggerState(){
+    public int getTriggerState()
+    {
         return this.triggerState;
     }
-     public char getOutputValue(){
+    public char getOutputValue()
+    {
         return this.outputValue;
     }
-    public char getAction(){
+    public char getAction()
+    {
         return this.action;
     }
-    public void setOutputState(int outputState){
+    public void setOutputState(int outputState)
+    {
         this.outputState = outputState;
     }
-    public void setTriggerValue(char triggerValue){
+    public void setTriggerValue(char triggerValue)
+    {
         this.triggerValue = triggerValue;
     }
-    public void setTriggerState(int triggerState){
+    public void setTriggerState(int triggerState)
+    {
         this.triggerState = triggerState;
     }
-     public void setOutputValue(char outputValue){
+    public void setOutputValue(char outputValue)
+    {
         this.outputValue = outputValue;
     }
-    public void setAction(char action){
+    public void setAction(char action)
+    {
         this.action = action;
     }
 }

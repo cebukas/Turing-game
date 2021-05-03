@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d4ea6be60901564a8e75779077241b5, type: 3}
+  m_Name: Level14
+  m_EditorClassIdentifier: 
+  level: 14
+  levelDescription: Incement the input if the initial value has an even number of
+    1's. If the initial has an odd number of 1's then increment it twice
+  helpList:
+  - The expected output for the fitfh input row is 10000
+  - '-'
+  turingFact: 'The halting problem raises the question: is it possible to determine
+    that a program with a certain input will quit or continue forever? Alan Turing
+    proved that there is no common algorithm for determining this. '
+  exampleInputList:
+  - 0
+  - 11
+  - 111
+  - 1000
+  - 1111
+  - 1010
+  - 1011
+  - 1110
+  exampleOutputList:
+  - 1
+  - 100
+  - 1001
+  - 1010
+  - 10000
+  - 1011
+  - 1101
+  - 10000

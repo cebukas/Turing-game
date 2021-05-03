@@ -2,12 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using System;
 
 public class UI : MonoBehaviour
 {
     public TMP_InputField binaryInput;
     public List<TMP_InputField> stateFields = new List<TMP_InputField>();
     public List<StateFunction> stateFunctions = new List<StateFunction>();
+    public List<TMP_Text> stateNameFields = new List<TMP_Text>();
+
+    public List<TMP_Text> inputFields = new List<TMP_Text>();
+    public List<TMP_Text> outputFields = new List<TMP_Text>();
+    public List<bool> results = new List<bool>(new bool[8]);
 
     private List<char> inputList = new List<char>();
 
@@ -18,17 +26,32 @@ public class UI : MonoBehaviour
     private List<GameObject> inputCellList = new List<GameObject>();
 
     private string inputString;
+    private Level level;
+    private int currentInputRow = 0;
 
-    private bool isModified = true;
+    public GameObject errorPanel;
 
+    public SaveData saveData;
 
-    public void instantiateInput(){
-        foreach(var i in inputCellList){
+    private bool isFastExectionRunning = false;
+    private bool wasWinScreenShown = false;
+    public TMP_Text popup;
+    private AudioManager audioMan;
+    private bool isShown = false;
+
+    public TMP_Text freeModeInput;
+    public int isFreeMode = 0;
+    public void instantiateInput()
+    {
+        foreach (var i in inputCellList)
+        {
             Destroy(i);
+
         }
         inputCellList.Clear();
 
-        for (int i = 0; i < inputList.Count; i++){
+        for (int i = 0; i < inputList.Count; i++)
+        {
             inputCell.GetComponentInChildren<TMP_Text>().text = inputList[i].ToString();
             var cell = Instantiate(inputCell, new Vector3(0, 0, 0), Quaternion.identity);
             cell.transform.SetParent(GameObject.Find("input").transform);
@@ -36,88 +59,390 @@ public class UI : MonoBehaviour
 
             inputCellList.Add(cell);
         }
-        isModified = true;
         turingMachine.Restart();
 
     }
-    public void Awake(){
-        inputString = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
-        inputList.AddRange(inputString);
-        instantiateInput();
-    }
-    public void onStep(){
-        if (isModified){
-            dataReader.SetStateFields(stateFields);
-            dataReader.ReadStateFields();
-            stateFunctions = dataReader.GetStateFunctions();
+    public void Start()
+    {
+        isFreeMode = PlayerPrefs.GetInt("isFreeMode");
+        level = GameObject.Find("SceneLoader").GetComponent<SceneLoader>().level;
+        if (isFreeMode == 0)
+        {
+            for (int i = 0; i < inputFields.Count; i++)
+            {
+                inputFields[i].text = level.exampleInputList[i];
+            }
+            onInputStringChange("0");
 
-            turingMachine.SetOutputList(inputList);
-            turingMachine.SetStateFunctions(stateFunctions);
-            isModified = false;
-        }
-       
-        turingMachine.oneStep();
-        List<char> outputList = turingMachine.GetOutputList();
-        for(int i = 0; i < inputCellList.Count; i++){
-            inputCellList[i].GetComponentInChildren<TMP_Text>().text = outputList[i].ToString();
+            FillSavedStateFunctions(saveData.getStateFunctions(level.level));
+
+            HighlightCell(turingMachine.getPointer());
         }
 
+        audioMan = FindObjectOfType<AudioManager>();
     }
 
-     public void onFastSteps(){
+    private void FillSavedStateFunctions(List<StateFunction> sfList)
+    {
+        for (int i = 0; i < sfList.Count; i++)
+        {
+            for (int j = 0; j < stateFields.Count; j++)
+            {
+                string gameObjectName = stateFields[j].name.ToString();
 
-         if (isModified){
-            dataReader.SetStateFields(stateFields);
-            dataReader.ReadStateFields();
-            stateFunctions = dataReader.GetStateFunctions();
+                if (Char.IsDigit(gameObjectName[1]))
+                {
 
-            turingMachine.SetOutputList(inputList);
-            turingMachine.SetStateFunctions(stateFunctions);
-            isModified = false;
-        }
-          StartCoroutine("allStepsWithDelay");
+                    if (sfList[i].getTriggerValue() == gameObjectName[9] && sfList[i].getTriggerState() == int.Parse((gameObjectName[0] - '0').ToString() + (gameObjectName[1] - '0').ToString()))
+                    {
+                        stateFields[j].text = "q" + sfList[i].getOutputState().ToString() + ", " + sfList[i].getOutputValue().ToString() + ", " + sfList[i].getAction().ToString();
+                    }
+                }
+                else
+                {
+                    if (sfList[i].getTriggerValue() == gameObjectName[8] && sfList[i].getTriggerState() == (gameObjectName[0] - '0'))
+                    {
+                        stateFields[j].text = "q" + sfList[i].getOutputState().ToString() + ", " + sfList[i].getOutputValue().ToString() + ", " + sfList[i].getAction().ToString();
+                    }
+                }
 
-    }
-    public IEnumerator allStepsWithDelay() {
-        int returnValue = 0;
-        while(returnValue != 1){
-            returnValue = turingMachine.oneStep();
-                    List<char> outputList = turingMachine.GetOutputList();
-            for(int i = 0; i < inputCellList.Count; i++){
-            inputCellList[i].GetComponentInChildren<TMP_Text>().text = outputList[i].ToString();
-        }
-            yield return new WaitForSeconds(1f);
-        }
-
-    }
-
-    public void onSkipSteps(){
-        if (isModified){
-            dataReader.SetStateFields(stateFields);
-            dataReader.ReadStateFields();
-            stateFunctions = dataReader.GetStateFunctions();
-
-            for (int i = 0; i < stateFunctions.Count; i++){
-                Debug.Log(stateFunctions[i].getOutputValue());
             }
 
-            turingMachine.SetOutputList(inputList);
-            turingMachine.SetStateFunctions(stateFunctions);
-            isModified = false;
-        }
-       
-        turingMachine.allSteps();
-        List<char> outputList = turingMachine.GetOutputList();
-        for(int i = 0; i < inputCellList.Count; i++){
-            inputCellList[i].GetComponentInChildren<TMP_Text>().text = outputList[i].ToString();
         }
 
     }
-    public void onRestart(){
+    private string formatOutput(string output)
+    {
+        int pointer = turingMachine.getPointer();
+        if (pointer < 0)
+        {
+            pointer = 0;
+        }
+        output = output.Remove(0, pointer);
+        output = output.Substring(0, output.IndexOf("b"));
+        if (output == "")
+        {
+            output = "-";
+        }
+        return output;
+    }
+    public void onOutputChange()
+    {
+        outputFields[currentInputRow].text = formatOutput(new string(turingMachine.GetOutputList().ToArray()));
+    }
+    public void onInputStringChange(string inputNumber)
+    {
+        currentInputRow = int.Parse(inputNumber);
+        inputString = "bb" + inputFields[currentInputRow].text + "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+        inputList.Clear();
+        inputList.AddRange(inputString);
+        instantiateInput();
+        highlightState(0);
+
+        if (isFastExectionRunning)
+        {
+            StopCoroutine("allStepsWithDelay");
+            isFastExectionRunning = false;
+        }
+        HighlightCell(turingMachine.getPointer());
+
+    }
+    public void highlightState(int state)
+    {
+        if (state != -1)
+        {
+            foreach (var i in stateNameFields)
+            {
+                i.fontStyle = FontStyles.Normal;
+                i.fontSize = 24;
+            }
+            stateNameFields[state].fontStyle = FontStyles.Bold;
+            stateNameFields[state].fontSize = stateNameFields[state].fontSize + 5;
+        }
+    }
+    public void checkOutput()
+    {
+        string output = formatOutput(new string(turingMachine.GetOutputList().ToArray()));
+        if (output == level.exampleOutputList[currentInputRow])
+        {
+            results[currentInputRow] = true;
+            inputFields[currentInputRow].fontStyle = FontStyles.Strikethrough;
+
+            ColorBlock modifiedColors = inputFields[currentInputRow].GetComponent<Button>().colors;
+            modifiedColors.normalColor = Color.white;
+            inputFields[currentInputRow].GetComponent<Button>().colors = modifiedColors;
+
+            // check if all rows are completed
+            if (!results.Contains(false) && !wasWinScreenShown)
+            {
+                audioMan.Play("GG");
+                wasWinScreenShown = true;
+                saveData.PassLevel(level.level);
+                GetComponent<InGameMenu>().onWin();
+            }
+        }
+    }
+
+    private void ShowPopup(string msg)
+    {
+        if (!isShown)
+        {
+            popup.text = msg;
+            popup.gameObject.SetActive(true);
+            isShown = true;
+            Invoke("disablePopup", 2.0f);
+        }
+    }
+    private void disablePopup()
+    {
+        isShown = false;
+        popup.gameObject.SetActive(false);
+    }
+
+    public void onSaveExit()
+    {
+        audioMan.Play("Menu");
+        dataReader.SetStateFields(stateFields);
+        dataReader.ReadStateFields();
+        saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
+        SceneManager.LoadScene(0);
+    }
+    public void onExitWithoutSave()
+    {
+        audioMan.Play("Menu");
+        saveData.setStateFuctions(new List<StateFunction>(), level.level);
+        SceneManager.LoadScene(0);
+    }
+
+    private bool checkDataErrors(List<int> errors)
+    {
+        if (errors.Count != 0)
+        {
+            string errorList = "";
+            foreach (var i in errors)
+            {
+
+                string gameObjectName = stateFields[i].name.ToString();
+                if (Char.IsDigit(gameObjectName[1]))
+                {
+                    errorList += "q" + ((gameObjectName[0] - '0').ToString() + (gameObjectName[1] - '0').ToString()).ToString() + "-" + gameObjectName[9];
+                }
+                else
+                {
+                    errorList += "q" + (gameObjectName[0] - '0').ToString() + "-" + gameObjectName[8];
+
+                }
+
+                errorList += "   ";
+            }
+            ShowError("Incorrect function syntax in: " + errorList.ToString() + "\n Please follow the function format 'state (q0, q1, q2...), value (0, 1, b), action (L, R, N)'");
+            return false;
+        }
+        else
+            return true;
+    }
+    public void onStep()
+    {
+        audioMan.Play("Step");
+        dataReader.SetStateFields(stateFields);
+        var errors = dataReader.ReadStateFields();
+        if (checkDataErrors(errors))
+        {
+            stateFunctions = dataReader.GetStateFunctions();
+
+            turingMachine.SetOutputList(inputList);
+            turingMachine.SetStateFunctions(stateFunctions);
+
+            if (isFastExectionRunning)
+            {
+                StopCoroutine("allStepsWithDelay");
+                isFastExectionRunning = false;
+            }
+
+            int machineResult = turingMachine.oneStep();
+
+            if (machineResult == -1)
+            {
+                ShowError("You are moving the pointer out of the game bounds." +
+                  " Execution halted.");
+                return;
+            }
+            List<char> outputList = turingMachine.GetOutputList();
+            for (int i = 0; i < inputCellList.Count; i++)
+            {
+                inputCellList[i].GetComponentInChildren<TMP_Text>().text = outputList[i].ToString();
+            }
+            if (isFreeMode == 0)
+                onOutputChange();
+            HighlightCell(turingMachine.getPointer());
+            highlightState(turingMachine.getState());
+
+            saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
+            if (machineResult == 1) //final state reached
+            {
+                audioMan.Stop("Step");
+                audioMan.Play("Final");
+                ShowPopup("Final state reached!");
+                checkOutput();
+            }
+
+        }
+    }
+    public void HighlightCell(int cell)
+    {
+        foreach (var i in inputCellList)
+        {
+            i.GetComponentInChildren<Image>().color = Color.black;
+        }
+        inputCellList[cell].GetComponentInChildren<Image>().color = new Color32(50, 50, 50, 255);
+    }
+
+    public void ShowError(string error)
+    {
+        audioMan.Stop("Menu");
+        FindObjectOfType<AudioManager>().Play("Error");
+        errorPanel.SetActive(true);
+        var TmpObject = GameObject.Find("Error Message");
+        var TMP = TmpObject.GetComponent<TMP_Text>();
+        TMP.text = error;
+    }
+    public void onExitError()
+    {
+        audioMan.Play("Menu");
+        errorPanel.SetActive(false);
+    }
+    public void onFastSteps()
+    {
+        if (!isFastExectionRunning)
+        {
+            dataReader.SetStateFields(stateFields);
+            var errors = dataReader.ReadStateFields();
+            if (checkDataErrors(errors))
+            {
+                stateFunctions = dataReader.GetStateFunctions();
+
+                turingMachine.SetOutputList(inputList);
+                turingMachine.SetStateFunctions(stateFunctions);
+                saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
+                StartCoroutine("allStepsWithDelay");
+            }
+        }
+        else
+        {
+            isFastExectionRunning = false;
+            audioMan.Play("Menu");
+            StopCoroutine("allStepsWithDelay");
+        }
+    }
+    private void Update()
+    {
+        if (isFastExectionRunning)
+        {
+            foreach (var i in stateFields)
+            {
+                i.readOnly = true;
+            }
+        }
+        else
+        {
+            foreach (var i in stateFields)
+            {
+                i.readOnly = false;
+            }
+        }
+    }
+    public IEnumerator allStepsWithDelay()
+    {
+        isFastExectionRunning = true;
+        int returnValue = 0;
+        while (returnValue != 1)
+        {
+            returnValue = turingMachine.oneStep();
+            audioMan.Play("Step");
+            if (returnValue == -1)
+            {
+                ShowError("You are moving the pointer out of the game bounds." +
+                  " Execution halted.");
+                isFastExectionRunning = false;
+                break;
+            }
+            List<char> outputList = turingMachine.GetOutputList();
+            for (int i = 0; i < inputCellList.Count; i++)
+            {
+                inputCellList[i].GetComponentInChildren<TMP_Text>().text = outputList[i].ToString();
+            }
+            highlightState(turingMachine.getState());
+            HighlightCell(turingMachine.getPointer());
+            if (isFreeMode == 0)
+                onOutputChange();
+            if (returnValue == 1) //final state reached
+            {
+                audioMan.Stop("Menu");
+                audioMan.Play("Final");
+                ShowPopup("Final state reached!");
+                checkOutput();
+            }
+            yield
+            return new WaitForSeconds(0.8f);
+        }
+        isFastExectionRunning = false;
+
+    }
+
+    public void onSkipSteps()
+    {
+        audioMan.Play("Step");
+        dataReader.SetStateFields(stateFields);
+        var errors = dataReader.ReadStateFields();
+        if (checkDataErrors(errors))
+        {
+            stateFunctions = dataReader.GetStateFunctions();
+
+            turingMachine.SetOutputList(inputList);
+            turingMachine.SetStateFunctions(stateFunctions);
+            if (isFastExectionRunning)
+            {
+                StopCoroutine("allStepsWithDelay");
+                isFastExectionRunning = false;
+            }
+            saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
+            int machineResult = turingMachine.allSteps();
+            audioMan.Play("Final");
+            if (machineResult == -1)
+            {
+                audioMan.Stop("Final");
+                ShowError("You are moving the pointer out of the game bounds." +
+                  " Execution halted.");
+            }
+            if (machineResult == -2)
+            {
+                audioMan.Stop("Final");
+                ShowError("Turing Machine didn't reach a final state after 1000 steps." +
+                  " Execution halted.");
+            }
+
+            ShowPopup("Final state reached!");
+            List<char> outputList = turingMachine.GetOutputList();
+            for (int i = 0; i < inputCellList.Count; i++)
+            {
+                inputCellList[i].GetComponentInChildren<TMP_Text>().text = outputList[i].ToString();
+            }
+            if (isFreeMode == 0)
+                onOutputChange();
+            checkOutput();
+            HighlightCell(turingMachine.getPointer());
+        }
+
+    }
+    public void onRestart()
+    {
         inputString = binaryInput.text;
         inputString = "bb" + inputString + "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
         inputList.Clear();
         inputList.AddRange(inputString);
         instantiateInput();
+        HighlightCell(2);
+        highlightState(0);
     }
+
 }

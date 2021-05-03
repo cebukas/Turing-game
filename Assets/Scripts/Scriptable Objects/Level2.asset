@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d4ea6be60901564a8e75779077241b5, type: 3}
+  m_Name: Level2
+  m_EditorClassIdentifier: 
+  level: 2
+  levelDescription: Replace all '0' symbols to '1' and all '1' symbols to '0'
+  helpList:
+  - The expected output for the fourth input row is 01010101
+  - '-'
+  turingFact: The Turing Machine model was created in 1936.
+  exampleInputList:
+  - 111
+  - 000
+  - 0101
+  - 10101010
+  - 00001111
+  - 1111111111111
+  - 11001100
+  - 0
+  exampleOutputList:
+  - 000
+  - 111
+  - 1010
+  - 01010101
+  - 11110000
+  - 0000000000000
+  - 00110011
+  - 1
