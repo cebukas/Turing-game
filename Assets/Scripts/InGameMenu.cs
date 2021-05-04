@@ -27,7 +27,28 @@ public class InGameMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
+        }
 
+        if (Input.GetKey(KeyCode.LeftControl))  
+        {
+            if (Input.GetKeyUp(KeyCode.T))  //task shortcut
+            {
+                if (taskPanel.activeInHierarchy)
+                {
+                    onTaskClose();
+                }
+                else
+                    onTask();
+            }
+            if (Input.GetKeyUp(KeyCode.H))  //task shortcut
+            {
+                if (helpPanel.activeInHierarchy)
+                {
+                    onHelpClose();
+                }
+                else
+                    onHelp();
+            }
         }
     }
     public void onResume()

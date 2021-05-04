@@ -350,6 +350,22 @@ public class UI : MonoBehaviour
                 i.readOnly = false;
             }
         }
+
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            if (Input.GetKeyUp(KeyCode.S))  //step shortcut
+            {
+                onStep();
+            }
+            if (Input.GetKeyUp(KeyCode.F))  //fast shortcut
+            {
+                onFastSteps();
+            }
+            if (Input.GetKeyUp(KeyCode.A))  //skip shortcut
+            {
+                onSkipSteps();
+            }
+        }
     }
     public IEnumerator allStepsWithDelay()
     {
