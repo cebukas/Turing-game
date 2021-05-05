@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -13,6 +11,9 @@ public class Menu : MonoBehaviour
     public GameObject campaignMenu;
     public GameObject turingFactsMenu;
     public GameObject turingFactPanel;
+    public GameObject settingsPanel;
+    public GameObject backFromSettings;
+    public GameObject soundButton;
     public TMP_Text turingText;
 
     public GameObject backCampaign;
@@ -26,32 +27,65 @@ public class Menu : MonoBehaviour
     private GameObject gameManager;
     private SaveData saveData;
     private List<bool> levels;
+
+    private AudioManager audioMan;
     public void onTutorial()
     {
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         SceneManager.LoadScene(2);
     }
     private void Start()
     {
         gameManager = GameObject.Find("GameManager");
+        audioMan = FindObjectOfType<AudioManager>();
         saveData = gameManager.GetComponent<SaveData>();
         levels = saveData.GetLevels();
     }
     public void onPlay(){
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         playMenu.SetActive(true);
         mainMenu.SetActive(false);
 
     }
      public void onBack(){
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         playMenu.SetActive(false);
         mainMenu.SetActive(true);
     }
-        public void onSettings(){
+        public void onSettings() {
+            audioMan.Play("Menu");
+        backFromSettings.SetActive(true);
+        settingsPanel.SetActive(true);
+        mainMenu.SetActive(false);
+    }
+    public void onSettingsBack()
+    {
+            audioMan.Play("Menu");
+        settingsPanel.SetActive(false);
+        mainMenu.SetActive(true);
+        backFromSettings.SetActive(false);
+    }
+
+    public void onSound()
+    {
+            audioMan.Play("Menu");
+
+        var tmpObject = soundButton.GetComponentInChildren<TMP_Text>();
+
+        if (tmpObject.text == "SOUND : ON")
+        {
+            tmpObject.text = "SOUND : OFF";
+            PlayerPrefs.SetInt("sound", -1);
+        }
+
+        else
+        {
+            tmpObject.text = "SOUND : ON";
+            PlayerPrefs.SetInt("sound", 1);
+        }
     }
         public void onFacts(){
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         levels = saveData.GetLevels();
         backFacts.SetActive(true);
         turingFactsMenu.SetActive(true);
@@ -90,23 +124,23 @@ public class Menu : MonoBehaviour
     }
     public void onFactsBack()
     {
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         backFacts.SetActive(false);
         turingFactsMenu.SetActive(false);
         mainMenu.SetActive(true);
     }
      public void onFreeMode(){
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         PlayerPrefs.SetInt("isFreeMode", 1);
         SceneManager.LoadScene(3);
     }
         public void onExit(){
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         Application.Quit();
     }
     public void onCampaign()
     {
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         levels = saveData.GetLevels();
         backCampaign.SetActive(true);
         playMenu.SetActive(false);
@@ -159,7 +193,7 @@ public class Menu : MonoBehaviour
     }
     public void onLoadLevel(string level)
     {
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         if (checkIfPlayable(int.Parse(level) - 1))
         {
             PlayerPrefs.SetInt("isFreeMode", 0);
@@ -169,7 +203,7 @@ public class Menu : MonoBehaviour
     }
     public void onLoadFact(string fact)
     {
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         if (levels[int.Parse(fact) - 1] != false)
         {
             turingFactPanel.SetActive(true);
@@ -179,12 +213,12 @@ public class Menu : MonoBehaviour
     }
     public void onExitFact()
     {
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         turingFactPanel.SetActive(false);
     }
     public void onBackFromCampaign()
     {
-        FindObjectOfType<AudioManager>().Play("Menu");
+            audioMan.Play("Menu");
         backCampaign.SetActive(false);
         campaignMenu.SetActive(false);
         playMenu.SetActive(true);

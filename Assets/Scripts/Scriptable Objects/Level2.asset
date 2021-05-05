@@ -16,7 +16,7 @@ MonoBehaviour:
   levelDescription: Replace all '0' symbols to '1' and all '1' symbols to '0'
   helpList:
   - The expected output for the fourth input row is 01010101
-  - '-'
+  - This task can be solved similarly to the 1st level task
   turingFact: The Turing Machine model was created in 1936.
   exampleInputList:
   - 111
