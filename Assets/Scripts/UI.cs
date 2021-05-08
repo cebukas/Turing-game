@@ -41,6 +41,8 @@ public class UI : MonoBehaviour
 
     public TMP_Text freeModeInput;
     public int isFreeMode = 0;
+
+    List<StateFunction> lastSavedFunctions = new List<StateFunction>();
     public void instantiateInput()
     {
         foreach (var i in inputCellList)
@@ -60,10 +62,13 @@ public class UI : MonoBehaviour
             inputCellList.Add(cell);
         }
         turingMachine.Restart();
+        audioMan.Play("Menu");
 
     }
     public void Start()
     {
+
+        audioMan = FindObjectOfType<AudioManager>();
         isFreeMode = PlayerPrefs.GetInt("isFreeMode");
         level = GameObject.Find("SceneLoader").GetComponent<SceneLoader>().level;
         if (isFreeMode == 0)
@@ -74,13 +79,17 @@ public class UI : MonoBehaviour
             }
             onInputStringChange("0");
             FillSavedStateFunctions(saveData.getStateFunctions(level.level));
+
+            lastSavedFunctions = saveData.getStateFunctions(level.level);
             HighlightCell(turingMachine.getPointer());
         }
         else
+        {
+            lastSavedFunctions = saveData.getStateFunctions(16);
             FillSavedStateFunctions(saveData.getStateFunctions(16));
+        }
 
 
-        audioMan = FindObjectOfType<AudioManager>();
     }
 
     private void FillSavedStateFunctions(List<StateFunction> sfList)
@@ -213,7 +222,13 @@ public class UI : MonoBehaviour
     }
     public void onExitWithoutSave()
     {
-            audioMan.Play("Menu");
+        if (isFreeMode == 0)
+        {
+            saveData.setStateFuctions(lastSavedFunctions, level.level);
+        }
+        else
+            saveData.setStateFuctions(lastSavedFunctions, 16);
+        audioMan.Play("Menu");
         SceneManager.LoadScene(0);
     }
 
@@ -278,10 +293,9 @@ public class UI : MonoBehaviour
             inputFields[i].GetComponent<Button>().colors = modifiedColors;
         }
     }
-    public void onStep() // need to handle other skip fast + first time isIdentical bad
+    public void onStep()
     {
-            audioMan.Play("Step");
-
+        audioMan.Play("Step");
         var last = new List<StateFunction>();
         foreach (var i in dataReader.GetStateFunctions())
         {
@@ -293,7 +307,7 @@ public class UI : MonoBehaviour
 
         bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
 
-        if (!isIdentical)
+        if (!isIdentical && isFreeMode == 0)
             StateFunctionsChanged();
 
         if (checkDataErrors(errors))
@@ -378,8 +392,8 @@ public class UI : MonoBehaviour
             var errors = dataReader.ReadStateFields();
 
             bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
-
-            if (!isIdentical)
+             
+            if (!isIdentical && isFreeMode == 0)
                 StateFunctionsChanged();
 
             if (checkDataErrors(errors))
@@ -487,7 +501,7 @@ public class UI : MonoBehaviour
 
         bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
 
-        if (!isIdentical)
+        if (!isIdentical && isFreeMode == 0)
             StateFunctionsChanged();
 
         if (checkDataErrors(errors))

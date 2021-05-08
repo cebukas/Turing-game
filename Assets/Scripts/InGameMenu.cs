@@ -10,7 +10,6 @@ public class InGameMenu : MonoBehaviour
     public GameObject pauseMenu;
     public GameObject winPanel;
     public GameObject factPanel;
-    public GameObject pauseMenuPanel;
     public GameObject soundPanel;
     public GameObject soundButton;
 

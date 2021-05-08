@@ -43,7 +43,6 @@ public class SaveData : MonoBehaviour
     {
         levelDataList = ReadFromBinaryFile<LevelDataList>(path);
         return levelDataList.levelDataList[level - 1].stateFunctions;
-
     }
 
     public static T ReadFromBinaryFile<T>(string filePath)
