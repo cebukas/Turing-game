@@ -41,6 +41,8 @@ public class UI : MonoBehaviour
 
     public TMP_Text freeModeInput;
     public int isFreeMode = 0;
+
+    List<StateFunction> lastSavedFunctions = new List<StateFunction>();
     public void instantiateInput()
     {
         foreach (var i in inputCellList)
@@ -60,10 +62,13 @@ public class UI : MonoBehaviour
             inputCellList.Add(cell);
         }
         turingMachine.Restart();
+        audioMan.Play("Menu");
 
     }
     public void Start()
     {
+
+        audioMan = FindObjectOfType<AudioManager>();
         isFreeMode = PlayerPrefs.GetInt("isFreeMode");
         level = GameObject.Find("SceneLoader").GetComponent<SceneLoader>().level;
         if (isFreeMode == 0)
@@ -73,13 +78,18 @@ public class UI : MonoBehaviour
                 inputFields[i].text = level.exampleInputList[i];
             }
             onInputStringChange("0");
-
             FillSavedStateFunctions(saveData.getStateFunctions(level.level));
 
+            lastSavedFunctions = saveData.getStateFunctions(level.level);
             HighlightCell(turingMachine.getPointer());
         }
+        else
+        {
+            lastSavedFunctions = saveData.getStateFunctions(16);
+            FillSavedStateFunctions(saveData.getStateFunctions(16));
+        }
 
-        audioMan = FindObjectOfType<AudioManager>();
+
     }
 
     private void FillSavedStateFunctions(List<StateFunction> sfList)
@@ -149,7 +159,7 @@ public class UI : MonoBehaviour
     }
     public void highlightState(int state)
     {
-        if (state != -1)
+        if (state != -1 && state <= 16)
         {
             foreach (var i in stateNameFields)
             {
@@ -175,7 +185,7 @@ public class UI : MonoBehaviour
             // check if all rows are completed
             if (!results.Contains(false) && !wasWinScreenShown)
             {
-                audioMan.Play("GG");
+                    audioMan.Play("GG");
                 wasWinScreenShown = true;
                 saveData.PassLevel(level.level);
                 GetComponent<InGameMenu>().onWin();
@@ -201,16 +211,24 @@ public class UI : MonoBehaviour
 
     public void onSaveExit()
     {
-        audioMan.Play("Menu");
+            audioMan.Play("Menu");
         dataReader.SetStateFields(stateFields);
         dataReader.ReadStateFields();
-        saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
+        if (isFreeMode == 1)
+            saveData.setStateFuctions(dataReader.GetStateFunctions(), 16);
+        else
+            saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
         SceneManager.LoadScene(0);
     }
     public void onExitWithoutSave()
     {
+        if (isFreeMode == 0)
+        {
+            saveData.setStateFuctions(lastSavedFunctions, level.level);
+        }
+        else
+            saveData.setStateFuctions(lastSavedFunctions, 16);
         audioMan.Play("Menu");
-        saveData.setStateFuctions(new List<StateFunction>(), level.level);
         SceneManager.LoadScene(0);
     }
 
@@ -241,11 +259,57 @@ public class UI : MonoBehaviour
         else
             return true;
     }
+
+    private bool CompareStateFunctionLists(List<StateFunction> last, List<StateFunction> current) // returns true if identical, false if changed
+    {
+        if (last.Count != current.Count)
+            return false;
+        else
+        {
+            for (int i = 0; i < last.Count; i++)
+            {
+                if(last[i].getAction() != current[i].getAction() ||
+                    last[i].getOutputState() != current[i].getOutputState() ||
+                    last[i].getOutputValue() != current[i].getOutputValue() ||
+                    last[i].getTriggerState() != current[i].getTriggerState() || 
+                    last[i].getTriggerValue() != current[i].getTriggerValue())
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+    private void StateFunctionsChanged()
+    {
+        for(int i = 0; i < results.Count; i++)
+        {
+            results[i] = false;
+
+            inputFields[i].fontStyle = FontStyles.Normal;
+
+            ColorBlock modifiedColors = inputFields[i].GetComponent<Button>().colors;
+            modifiedColors.normalColor = new Color32(255, 255, 255, 128);
+            inputFields[i].GetComponent<Button>().colors = modifiedColors;
+        }
+    }
     public void onStep()
     {
         audioMan.Play("Step");
+        var last = new List<StateFunction>();
+        foreach (var i in dataReader.GetStateFunctions())
+        {
+            last.Add(i);
+        }
+
         dataReader.SetStateFields(stateFields);
         var errors = dataReader.ReadStateFields();
+
+        bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
+
+        if (!isIdentical && isFreeMode == 0)
+            StateFunctionsChanged();
+
         if (checkDataErrors(errors))
         {
             stateFunctions = dataReader.GetStateFunctions();
@@ -277,7 +341,10 @@ public class UI : MonoBehaviour
             HighlightCell(turingMachine.getPointer());
             highlightState(turingMachine.getState());
 
-            saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
+            if (isFreeMode == 1)
+                saveData.setStateFuctions(dataReader.GetStateFunctions(), 16);
+            else
+                saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
             if (machineResult == 1) //final state reached
             {
                 audioMan.Stop("Step");
@@ -299,8 +366,9 @@ public class UI : MonoBehaviour
 
     public void ShowError(string error)
     {
+
         audioMan.Stop("Menu");
-        FindObjectOfType<AudioManager>().Play("Error");
+        audioMan.Play("Error");
         errorPanel.SetActive(true);
         var TmpObject = GameObject.Find("Error Message");
         var TMP = TmpObject.GetComponent<TMP_Text>();
@@ -315,22 +383,36 @@ public class UI : MonoBehaviour
     {
         if (!isFastExectionRunning)
         {
+            var last = new List<StateFunction>();
+            foreach (var i in dataReader.GetStateFunctions())
+            {
+                last.Add(i);
+            }
             dataReader.SetStateFields(stateFields);
             var errors = dataReader.ReadStateFields();
+
+            bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
+             
+            if (!isIdentical && isFreeMode == 0)
+                StateFunctionsChanged();
+
             if (checkDataErrors(errors))
             {
                 stateFunctions = dataReader.GetStateFunctions();
 
                 turingMachine.SetOutputList(inputList);
                 turingMachine.SetStateFunctions(stateFunctions);
-                saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
+                if (isFreeMode == 1)
+                    saveData.setStateFuctions(dataReader.GetStateFunctions(), 16);
+                else
+                    saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
                 StartCoroutine("allStepsWithDelay");
             }
         }
         else
         {
             isFastExectionRunning = false;
-            audioMan.Play("Menu");
+                audioMan.Play("Menu");
             StopCoroutine("allStepsWithDelay");
         }
     }
@@ -350,6 +432,22 @@ public class UI : MonoBehaviour
                 i.readOnly = false;
             }
         }
+
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            if (Input.GetKeyUp(KeyCode.Alpha1))  //step shortcut
+            {
+                onStep();
+            }
+            if (Input.GetKeyUp(KeyCode.Alpha2))  //fast shortcut
+            {
+                onFastSteps();
+            }
+            if (Input.GetKeyUp(KeyCode.Alpha3))  //skip shortcut
+            {
+                onSkipSteps();
+            }
+        }
     }
     public IEnumerator allStepsWithDelay()
     {
@@ -358,7 +456,7 @@ public class UI : MonoBehaviour
         while (returnValue != 1)
         {
             returnValue = turingMachine.oneStep();
-            audioMan.Play("Step");
+                audioMan.Play("Step");
             if (returnValue == -1)
             {
                 ShowError("You are moving the pointer out of the game bounds." +
@@ -371,14 +469,13 @@ public class UI : MonoBehaviour
             {
                 inputCellList[i].GetComponentInChildren<TMP_Text>().text = outputList[i].ToString();
             }
-            highlightState(turingMachine.getState());
             HighlightCell(turingMachine.getPointer());
             if (isFreeMode == 0)
                 onOutputChange();
             if (returnValue == 1) //final state reached
             {
                 audioMan.Stop("Menu");
-                audioMan.Play("Final");
+                    audioMan.Play("Final");
                 ShowPopup("Final state reached!");
                 checkOutput();
             }
@@ -391,9 +488,22 @@ public class UI : MonoBehaviour
 
     public void onSkipSteps()
     {
-        audioMan.Play("Step");
+            audioMan.Play("Step");
+
+        var last = new List<StateFunction>();
+        foreach (var i in dataReader.GetStateFunctions())
+        {
+            last.Add(i);
+        }
+
         dataReader.SetStateFields(stateFields);
         var errors = dataReader.ReadStateFields();
+
+        bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
+
+        if (!isIdentical && isFreeMode == 0)
+            StateFunctionsChanged();
+
         if (checkDataErrors(errors))
         {
             stateFunctions = dataReader.GetStateFunctions();
@@ -405,9 +515,12 @@ public class UI : MonoBehaviour
                 StopCoroutine("allStepsWithDelay");
                 isFastExectionRunning = false;
             }
-            saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
+            if (isFreeMode == 1)
+                saveData.setStateFuctions(dataReader.GetStateFunctions(), 16);
+            else
+                saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
             int machineResult = turingMachine.allSteps();
-            audioMan.Play("Final");
+                audioMan.Play("Final");
             if (machineResult == -1)
             {
                 audioMan.Stop("Final");
@@ -437,6 +550,13 @@ public class UI : MonoBehaviour
     public void onRestart()
     {
         inputString = binaryInput.text;
+        inputString = dataReader.ReadBinaryInput(inputString);
+        if (inputString == "")
+        {
+            ShowError("Non binary input!");
+            return;
+        }
+
         inputString = "bb" + inputString + "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
         inputList.Clear();
         inputList.AddRange(inputString);
@@ -444,5 +564,4 @@ public class UI : MonoBehaviour
         HighlightCell(2);
         highlightState(0);
     }
-
 }

@@ -17,7 +17,7 @@ MonoBehaviour:
     of the input
   helpList:
   - The expected output for the first input row is 11111
-  - '-'
+  - The first digit can be ignored
   turingFact: 'In practice, the Turing Machine can not be fully implemented because
     it requires the possibility of infinite calculations. A computer is just a restricted
     Turing Machine, Everything that can be calculated using a theoretical Turing

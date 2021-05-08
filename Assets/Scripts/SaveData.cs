@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -44,7 +43,6 @@ public class SaveData : MonoBehaviour
     {
         levelDataList = ReadFromBinaryFile<LevelDataList>(path);
         return levelDataList.levelDataList[level - 1].stateFunctions;
-
     }
 
     public static T ReadFromBinaryFile<T>(string filePath)
@@ -89,6 +87,7 @@ public class LevelDataList
         var data13 = new LevelData();
         var data14 = new LevelData();
         var data15 = new LevelData();
+        var data16 = new LevelData();
 
         levelDataList.Add(data1);
         levelDataList.Add(data2);
@@ -105,6 +104,7 @@ public class LevelDataList
         levelDataList.Add(data13);
         levelDataList.Add(data14);
         levelDataList.Add(data15);
+        levelDataList.Add(data16);
     }
 }
 

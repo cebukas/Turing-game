@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,6 +10,8 @@ public class InGameMenu : MonoBehaviour
     public GameObject pauseMenu;
     public GameObject winPanel;
     public GameObject factPanel;
+    public GameObject soundPanel;
+    public GameObject soundButton;
 
     private AudioManager audioMan;
 
@@ -27,7 +27,29 @@ public class InGameMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
+            soundPanel.SetActive(false);
+        }
 
+        if (Input.GetKey(KeyCode.LeftControl))  
+        {
+            if (Input.GetKeyUp(KeyCode.T))  //task shortcut
+            {
+                if (taskPanel.activeInHierarchy)
+                {
+                    onTaskClose();
+                }
+                else
+                    onTask();
+            }
+            if (Input.GetKeyUp(KeyCode.H))  //task shortcut
+            {
+                if (helpPanel.activeInHierarchy)
+                {
+                    onHelpClose();
+                }
+                else
+                    onHelp();
+            }
         }
     }
     public void onResume()
@@ -35,12 +57,44 @@ public class InGameMenu : MonoBehaviour
         audioMan.Play("Menu");
         pauseMenu.SetActive(false);
     }
+    
     public void onExitFromPause()
     {
         audioMan.Play("Menu");
         pauseMenu.SetActive(false);
         exitPanel.SetActive(true);
 
+    }
+    public void onSettings()
+    {
+        audioMan.Play("Menu");
+        pauseMenu.SetActive(false);
+        soundPanel.SetActive(true);
+    }
+
+    public void onSound()
+    {
+        audioMan.Play("Menu");
+
+        var tmpObject = soundButton.GetComponentInChildren<TMP_Text>();
+
+        if (tmpObject.text == "SOUND : ON")
+        {
+            tmpObject.text = "SOUND : OFF";
+            PlayerPrefs.SetInt("sound", -1);
+        }
+
+        else
+        {
+            tmpObject.text = "SOUND : ON";
+            PlayerPrefs.SetInt("sound", 1);
+        }
+    }
+    public void onCloseSettings()
+    {
+        audioMan.Play("Menu");
+        pauseMenu.SetActive(true);
+        soundPanel.SetActive(false);
     }
     public void onExitFromTutorial()
     {

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Audio;
 using System;
 
 public class AudioManager : MonoBehaviour
@@ -23,8 +22,12 @@ public class AudioManager : MonoBehaviour
     }
     public void Play(string name)
     {
-        Sound s = Array.Find(sounds, sounds => sounds.name == name);
-        s.source.Play();
+        if (PlayerPrefs.GetInt("sound") >= 0)
+        {
+            Sound s = Array.Find(sounds, sounds => sounds.name == name);
+            s.source.Play();
+        }
+
     }
     public void Stop(string name){
         Sound s = Array.Find(sounds, sounds => sounds.name == name);
