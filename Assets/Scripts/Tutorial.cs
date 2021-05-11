@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Tutorial : MonoBehaviour
 {
@@ -33,6 +34,10 @@ public class Tutorial : MonoBehaviour
     public GameObject panel27;
     public GameObject panel28;
 
+    private void Start()
+    {
+       // this.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1680, 1050);
+    }
     void Update()
     {
         if (counter == 1)
