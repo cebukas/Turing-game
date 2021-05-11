@@ -36,11 +36,17 @@ public class UI : MonoBehaviour
     private bool isFastExectionRunning = false;
     private bool wasWinScreenShown = false;
     public TMP_Text popup;
+    public TMP_Text popup2;
     private AudioManager audioMan;
     private bool isShown = false;
+    private bool isShown2 = false;
 
     public TMP_Text freeModeInput;
     public int isFreeMode = 0;
+
+    private bool isFirstRun = true;
+    private int firstLevelHelps = 1;
+    private int finalStateReachedCounter = 0;
 
     List<StateFunction> lastSavedFunctions = new List<StateFunction>();
     public void instantiateInput()
@@ -67,7 +73,7 @@ public class UI : MonoBehaviour
     }
     public void Start()
     {
-
+       // this.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1600, 900);
         audioMan = FindObjectOfType<AudioManager>();
         isFreeMode = PlayerPrefs.GetInt("isFreeMode");
         level = GameObject.Find("SceneLoader").GetComponent<SceneLoader>().level;
@@ -89,7 +95,13 @@ public class UI : MonoBehaviour
             FillSavedStateFunctions(saveData.getStateFunctions(16));
         }
 
+        var TmpObject = GameObject.Find("Task Description");
+        var TMP = TmpObject.GetComponent<TMP_Text>();
+        TMP.text = level.levelDescription;
 
+        var TmpObjectTitle = GameObject.Find("Task Title");
+        var TMPTitle = TmpObjectTitle.GetComponent<TMP_Text>();
+        TMPTitle.text = "Level " + level.level + " Task";
     }
 
     private void FillSavedStateFunctions(List<StateFunction> sfList)
@@ -155,6 +167,7 @@ public class UI : MonoBehaviour
             isFastExectionRunning = false;
         }
         HighlightCell(turingMachine.getPointer());
+        finalStateReachedCounter = 0;
 
     }
     public void highlightState(int state)
@@ -185,10 +198,15 @@ public class UI : MonoBehaviour
             // check if all rows are completed
             if (!results.Contains(false) && !wasWinScreenShown)
             {
-                    audioMan.Play("GG");
+                audioMan.Play("GG");
                 wasWinScreenShown = true;
                 saveData.PassLevel(level.level);
                 GetComponent<InGameMenu>().onWin();
+            }
+            if (firstLevelHelps > 0)
+            {
+                ShowPopup2("Good job on getting the right answer for your first input row. Now select a different input!");
+                firstLevelHelps--;
             }
         }
     }
@@ -207,6 +225,21 @@ public class UI : MonoBehaviour
     {
         isShown = false;
         popup.gameObject.SetActive(false);
+    }
+    private void ShowPopup2(string msg)
+    {
+        if (!isShown2)
+        {
+            popup2.text = msg;
+            popup2.gameObject.SetActive(true);
+            isShown2 = true;
+            Invoke("disablePopup2", 4f);
+        }
+    }
+    private void disablePopup2()
+    {
+        isShown2 = false;
+        popup2.gameObject.SetActive(false);
     }
 
     public void onSaveExit()
@@ -282,16 +315,23 @@ public class UI : MonoBehaviour
     }
     private void StateFunctionsChanged()
     {
-        for(int i = 0; i < results.Count; i++)
+        if (!isFirstRun)
         {
-            results[i] = false;
+            if(results.Contains(true))
+                ShowPopup2("Passed input rows were cleared because state functions have changed!");
+            for (int i = 0; i < results.Count; i++)
+            {
+                results[i] = false;
 
-            inputFields[i].fontStyle = FontStyles.Normal;
+                inputFields[i].fontStyle = FontStyles.Normal;
 
-            ColorBlock modifiedColors = inputFields[i].GetComponent<Button>().colors;
-            modifiedColors.normalColor = new Color32(255, 255, 255, 128);
-            inputFields[i].GetComponent<Button>().colors = modifiedColors;
+                ColorBlock modifiedColors = inputFields[i].GetComponent<Button>().colors;
+                modifiedColors.normalColor = new Color32(255, 255, 255, 128);
+                inputFields[i].GetComponent<Button>().colors = modifiedColors;
+            }
         }
+        isFirstRun = false;
+
     }
     public void onStep()
     {
@@ -305,7 +345,13 @@ public class UI : MonoBehaviour
         dataReader.SetStateFields(stateFields);
         var errors = dataReader.ReadStateFields();
 
+        if (dataReader.GetStateFunctions().Count == 0)
+        {
+            ShowError("The state function table is empty!");
+        }
+
         bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
+
 
         if (!isIdentical && isFreeMode == 0)
             StateFunctionsChanged();
@@ -347,10 +393,18 @@ public class UI : MonoBehaviour
                 saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
             if (machineResult == 1) //final state reached
             {
+                finalStateReachedCounter++;
+
                 audioMan.Stop("Step");
                 audioMan.Play("Final");
                 ShowPopup("Final state reached!");
                 checkOutput();
+            }
+
+            if(finalStateReachedCounter > 3)
+            {
+                ShowPopup2("Consider resetting the input by clicking on one of the input rows.");
+                finalStateReachedCounter = 0;
             }
 
         }
@@ -381,6 +435,7 @@ public class UI : MonoBehaviour
     }
     public void onFastSteps()
     {
+
         if (!isFastExectionRunning)
         {
             var last = new List<StateFunction>();
@@ -390,6 +445,12 @@ public class UI : MonoBehaviour
             }
             dataReader.SetStateFields(stateFields);
             var errors = dataReader.ReadStateFields();
+
+
+            if (dataReader.GetStateFunctions().Count == 0)
+            {
+                ShowError("The state function table is empty!");
+            }
 
             bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
              
@@ -412,7 +473,7 @@ public class UI : MonoBehaviour
         else
         {
             isFastExectionRunning = false;
-                audioMan.Play("Menu");
+            audioMan.Play("Menu");
             StopCoroutine("allStepsWithDelay");
         }
     }
@@ -475,12 +536,17 @@ public class UI : MonoBehaviour
             if (returnValue == 1) //final state reached
             {
                 audioMan.Stop("Menu");
-                    audioMan.Play("Final");
+                audioMan.Play("Final");
                 ShowPopup("Final state reached!");
                 checkOutput();
+                finalStateReachedCounter++;
+                if (finalStateReachedCounter > 3)
+                {
+                    ShowPopup2("Consider resetting the input by clicking on one of the input rows.");
+                    finalStateReachedCounter = 0;
+                }
             }
-            yield
-            return new WaitForSeconds(0.8f);
+            yield return new WaitForSeconds(0.8f);
         }
         isFastExectionRunning = false;
 
@@ -488,7 +554,7 @@ public class UI : MonoBehaviour
 
     public void onSkipSteps()
     {
-            audioMan.Play("Step");
+        audioMan.Play("Step");
 
         var last = new List<StateFunction>();
         foreach (var i in dataReader.GetStateFunctions())
@@ -498,6 +564,11 @@ public class UI : MonoBehaviour
 
         dataReader.SetStateFields(stateFields);
         var errors = dataReader.ReadStateFields();
+
+        if (dataReader.GetStateFunctions().Count == 0)
+        {
+            ShowError("The state function table is empty!");
+        }
 
         bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
 
@@ -535,6 +606,12 @@ public class UI : MonoBehaviour
             }
 
             ShowPopup("Final state reached!");
+                finalStateReachedCounter++;
+            if (finalStateReachedCounter > 3)
+            {
+                ShowPopup2("Consider resetting the input by clicking on one of the input rows.");
+                finalStateReachedCounter = 0;
+            }
             List<char> outputList = turingMachine.GetOutputList();
             for (int i = 0; i < inputCellList.Count; i++)
             {

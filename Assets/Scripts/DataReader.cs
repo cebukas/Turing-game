@@ -37,7 +37,7 @@ public class DataReader
                 stateFunction.setTriggerValue(gameObjectName[8]);
             }
 
-            Regex regex = new Regex(@"q\d+\s*(,)\s*[01b]{1}(,)\s*[RLN]");
+            Regex regex = new Regex(@"q\d+\s*(,)\s*[01b]{1}\s*(,)\s*[RLN]");
 
             Match match = regex.Match(stateFields[i].text);
 

@@ -107,13 +107,7 @@ public class InGameMenu : MonoBehaviour
         audioMan.Play("Menu");
         taskPanel.SetActive(true);
 
-        var TmpObject = GameObject.Find("Task Description");
-        var TMP = TmpObject.GetComponent<TMP_Text>();
-        TMP.text = level.levelDescription;
 
-        var TmpObjectTitle = GameObject.Find("Task Title");
-        var TMPTitle = TmpObjectTitle.GetComponent<TMP_Text>();
-        TMPTitle.text = "Level " + level.level + " Task";
     }
     public void onTaskClose()
     {

@@ -31,7 +31,7 @@ public class Menu : MonoBehaviour
     private AudioManager audioMan;
     public void onTutorial()
     {
-            audioMan.Play("Menu");
+        audioMan.Play("Menu");
         SceneManager.LoadScene(2);
     }
     private void Start()
