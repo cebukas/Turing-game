@@ -19319,7 +19319,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1135027764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25179,7 +25179,6 @@ MonoBehaviour:
   pauseMenu: {fileID: 188726125}
   winPanel: {fileID: 1212809466}
   factPanel: {fileID: 1910609758}
-  pauseMenuPanel: {fileID: 1060735304}
   soundPanel: {fileID: 1956197836}
   soundButton: {fileID: 723153574}
 --- !u!1 &1442679266

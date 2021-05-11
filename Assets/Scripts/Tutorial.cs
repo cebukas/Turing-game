@@ -50,6 +50,7 @@ public class Tutorial : MonoBehaviour
         }
         if (counter == 3)
         {
+            panel5.SetActive(false);
             panel6.SetActive(false);
             panel7.SetActive(true);
             panel8.SetActive(true);

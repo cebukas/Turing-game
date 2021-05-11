@@ -42,6 +42,8 @@ public class UI : MonoBehaviour
     public TMP_Text freeModeInput;
     public int isFreeMode = 0;
 
+    private bool isFirstRun = true;
+
     List<StateFunction> lastSavedFunctions = new List<StateFunction>();
     public void instantiateInput()
     {
@@ -89,7 +91,13 @@ public class UI : MonoBehaviour
             FillSavedStateFunctions(saveData.getStateFunctions(16));
         }
 
+        var TmpObject = GameObject.Find("Task Description");
+        var TMP = TmpObject.GetComponent<TMP_Text>();
+        TMP.text = level.levelDescription;
 
+        var TmpObjectTitle = GameObject.Find("Task Title");
+        var TMPTitle = TmpObjectTitle.GetComponent<TMP_Text>();
+        TMPTitle.text = "Level " + level.level + " Task";
     }
 
     private void FillSavedStateFunctions(List<StateFunction> sfList)
@@ -200,7 +208,7 @@ public class UI : MonoBehaviour
             popup.text = msg;
             popup.gameObject.SetActive(true);
             isShown = true;
-            Invoke("disablePopup", 2.0f);
+            Invoke("disablePopup", 3.0f);
         }
     }
     private void disablePopup()
@@ -282,16 +290,22 @@ public class UI : MonoBehaviour
     }
     private void StateFunctionsChanged()
     {
-        for(int i = 0; i < results.Count; i++)
+        if (!isFirstRun)
         {
-            results[i] = false;
+            ShowPopup("Passed input rows were cleared because state functions have changed!");
+            for (int i = 0; i < results.Count; i++)
+            {
+                results[i] = false;
 
-            inputFields[i].fontStyle = FontStyles.Normal;
+                inputFields[i].fontStyle = FontStyles.Normal;
 
-            ColorBlock modifiedColors = inputFields[i].GetComponent<Button>().colors;
-            modifiedColors.normalColor = new Color32(255, 255, 255, 128);
-            inputFields[i].GetComponent<Button>().colors = modifiedColors;
+                ColorBlock modifiedColors = inputFields[i].GetComponent<Button>().colors;
+                modifiedColors.normalColor = new Color32(255, 255, 255, 128);
+                inputFields[i].GetComponent<Button>().colors = modifiedColors;
+            }
         }
+        isFirstRun = false;
+
     }
     public void onStep()
     {
@@ -306,6 +320,7 @@ public class UI : MonoBehaviour
         var errors = dataReader.ReadStateFields();
 
         bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
+
 
         if (!isIdentical && isFreeMode == 0)
             StateFunctionsChanged();
