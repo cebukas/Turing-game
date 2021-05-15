@@ -88,20 +88,22 @@ public class UI : MonoBehaviour
 
             lastSavedFunctions = saveData.getStateFunctions(level.level);
             HighlightCell(turingMachine.getPointer());
+
+
+            var TmpObject = GameObject.Find("Task Description");
+            var TMP = TmpObject.GetComponent<TMP_Text>();
+            TMP.text = level.levelDescription;
+
+            var TmpObjectTitle = GameObject.Find("Task Title");
+            var TMPTitle = TmpObjectTitle.GetComponent<TMP_Text>();
+            TMPTitle.text = "Level " + level.level + " Task";
         }
         else
         {
             lastSavedFunctions = saveData.getStateFunctions(16);
             FillSavedStateFunctions(saveData.getStateFunctions(16));
+            onStartFreeMode();
         }
-
-        var TmpObject = GameObject.Find("Task Description");
-        var TMP = TmpObject.GetComponent<TMP_Text>();
-        TMP.text = level.levelDescription;
-
-        var TmpObjectTitle = GameObject.Find("Task Title");
-        var TMPTitle = TmpObjectTitle.GetComponent<TMP_Text>();
-        TMPTitle.text = "Level " + level.level + " Task";
     }
 
     private void FillSavedStateFunctions(List<StateFunction> sfList)
@@ -415,7 +417,7 @@ public class UI : MonoBehaviour
         {
             i.GetComponentInChildren<Image>().color = Color.black;
         }
-        inputCellList[cell].GetComponentInChildren<Image>().color = new Color32(50, 50, 50, 255);
+        inputCellList[cell].GetComponentInChildren<Image>().color = new Color32(100, 100, 100, 255);
     }
 
     public void ShowError(string error)
@@ -601,8 +603,7 @@ public class UI : MonoBehaviour
             if (machineResult == -2)
             {
                 audioMan.Stop("Final");
-                ShowError("Turing Machine didn't reach a final state after 1000 steps." +
-                  " Execution halted.");
+                ShowError("Turing Machine didn't reach a final state after 1000 steps. Are you creating an infinite loop?");
             }
 
             ShowPopup("Final state reached!");
@@ -628,13 +629,20 @@ public class UI : MonoBehaviour
     {
         inputString = binaryInput.text;
         inputString = dataReader.ReadBinaryInput(inputString);
-        if (inputString == "")
-        {
-            ShowError("Non binary input!");
-            return;
-        }
-
+            if (inputString == "")
+            {
+                ShowError("Non binary input!");
+            }
         inputString = "bb" + inputString + "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+        inputList.Clear();
+        inputList.AddRange(inputString);
+        instantiateInput();
+        HighlightCell(2);
+        highlightState(0);
+    }
+    private void onStartFreeMode()
+    {
+        inputString = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
         inputList.Clear();
         inputList.AddRange(inputString);
         instantiateInput();

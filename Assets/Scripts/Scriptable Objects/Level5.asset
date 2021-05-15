@@ -17,7 +17,8 @@ MonoBehaviour:
     the first and last symbols
   helpList:
   - The expected output for the third input row is 101
-  - '-'
+  - You will need to figure out how to detect that this symbol is the last one in
+    the input
   turingFact: Turing predicted that by the year 2000 a computer 'would be able to
     play the imitation game so well that an average interrogator will not have more
     than a 70-percent chance of making the right identification (machine or human)

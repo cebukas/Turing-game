@@ -17916,8 +17916,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: To print the output correctly, two functions (q1-0 and q1-b) need to be
     added. q1-0 function makes the data row pointer walk back to the beginning of
-    nonblank data. the q1-b function then enters a final state and finishes the Turing
-    Machine's work.
+    non-empty data. the q1-b function then enters a final state and finishes the
+    Turing Machine's work.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f423a75d6962d484a82a8752263c4911, type: 2}
   m_sharedMaterial: {fileID: -5218059252203870167, guid: f423a75d6962d484a82a8752263c4911,
@@ -32397,7 +32397,7 @@ MonoBehaviour:
     qn are final.
 
     2. The output is considered to be all the data starting from
-    the pointer and moving to the right until the first blank value (b) is reached. '
+    the pointer and moving to the right until the first empty value (b) is reached. '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f423a75d6962d484a82a8752263c4911, type: 2}
   m_sharedMaterial: {fileID: -5218059252203870167, guid: f423a75d6962d484a82a8752263c4911,
