@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Level1
   m_EditorClassIdentifier: 
   level: 1
-  levelDescription: Replace all non empty symbols to '1' symbols
+  levelDescription: Create a set of state functions that would replace all 1's and
+    0's in the data row to 1's. The same functions have to work with every given
+    input row!
   helpList:
   - The expected output for the first input row is 111
   - This task is very similar to the one in the tutorial

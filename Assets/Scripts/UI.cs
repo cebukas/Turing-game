@@ -235,7 +235,7 @@ public class UI : MonoBehaviour
             popup2.text = msg;
             popup2.gameObject.SetActive(true);
             isShown2 = true;
-            Invoke("disablePopup2", 4f);
+            Invoke("disablePopup2", 6f);
         }
     }
     private void disablePopup2()

@@ -46,6 +46,7 @@ public class DataReader
             {
                 string trim = stateFields[i].text.Replace(" ", "");
                 trim = trim.ToUpper();
+                trim = trim.Replace("B", "b");
 
                 string[] inputValues = trim.Split(','); // input format should be 'q0, 0, R' or 'q0,0,R' or 'q10, 0, R'
                
