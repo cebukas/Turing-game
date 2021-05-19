@@ -1,14 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using System;
+using UnityEngine.UI;
 
-public class UI : MonoBehaviour
+public class Tutorial2 : MonoBehaviour
 {
-    public TMP_InputField binaryInput;
     public List<TMP_InputField> stateFields = new List<TMP_InputField>();
     private List<StateFunction> stateFunctions = new List<StateFunction>();
     public List<TMP_Text> stateNameFields = new List<TMP_Text>();
@@ -26,12 +25,9 @@ public class UI : MonoBehaviour
     private List<GameObject> inputCellList = new List<GameObject>();
 
     private string inputString;
-    private Level level;
     private int currentInputRow = 0;
 
     public GameObject errorPanel;
-
-    public SaveData saveData;
 
     private bool isFastExectionRunning = false;
     private bool wasWinScreenShown = false;
@@ -41,15 +37,218 @@ public class UI : MonoBehaviour
     private bool isShown = false;
     private bool isShown2 = false;
 
-    public int isFreeMode = 0;
-
     private bool isFirstRun = true;
     private int firstLevelHelps = 1;
     private int finalStateReachedCounter = 0;
 
-    List<StateFunction> lastSavedFunctions = new List<StateFunction>();
+    public List<Button> tutorialButtons = new List<Button>();
+    public List<GameObject> infoPanels = new List<GameObject>();
+    private int counter = 0;
+    private int stepPressed = 4;
+
+    public GameObject inputOutputTable;
+    public GameObject rightMenu;
+    public GameObject buttons;
+    public GameObject stateFuncTable;
+    public GameObject dataRow;
+
+    public List<Animator> animatorHeaders = new List<Animator>();
+
+    public GameObject nextButton;
+
+    public void onNext()
+    {
+        audioMan.Play("Menu");
+        counter++;
+        if (counter == 1)
+        {
+            infoPanels[0].SetActive(false);
+            infoPanels[1].SetActive(true);
+            dataRow.SetActive(true);
+        }
+        if (counter == 2)
+        {
+            rightMenu.SetActive(true);
+            infoPanels[1].SetActive(false);
+            infoPanels[2].SetActive(true);
+        }
+        if (counter == 3)
+        {
+            inputOutputTable.SetActive(true);
+            infoPanels[2].SetActive(false);
+            infoPanels[3].SetActive(true);
+        }
+        if (counter == 4)
+        {
+            stateFuncTable.SetActive(true);
+            infoPanels[3].SetActive(false);
+            infoPanels[4].SetActive(true);
+            foreach (var i in stateNameFields)
+            {
+                var a = i.GetComponentInChildren<Animator>();
+                if (a != null)
+                {
+                    a.enabled = false;
+                }
+            }
+
+            foreach (var i in animatorHeaders)
+            {
+                i.enabled = false;
+            }
+        }
+
+        if (counter == 5)
+        {
+            stateFuncTable.SetActive(true);
+            infoPanels[5].SetActive(true);
+
+            foreach (var i in stateNameFields)
+            {
+                var a = i.GetComponentInChildren<Animator>();
+                if (a != null)
+                {
+                    a.enabled = true;
+                }
+            }
+        }
+        if (counter == 6)
+        {
+            stateFuncTable.SetActive(true);
+            infoPanels[6].SetActive(true);
+            foreach (var i in stateNameFields)
+            {
+                var a = i.GetComponentInChildren<Animator>();
+                if (a != null)
+                {
+                    a.enabled = false;
+                }
+            }
+            foreach (var i in animatorHeaders)
+            {
+                i.enabled = true;
+            }
+        }
+        if (counter == 7)
+        {
+            stateFuncTable.SetActive(true);
+            infoPanels[4].SetActive(false);
+            infoPanels[5].SetActive(false);
+            infoPanels[6].SetActive(false);
+            infoPanels[7].SetActive(true);
+
+            foreach (var i in animatorHeaders)
+            {
+                i.enabled = false;
+            }
+        }
+        if (counter == 8)
+        {
+            stateFields[0].text = "q0, 0, R";
+            stateFields[1].text = "q0, 0, R";
+
+            infoPanels[7].SetActive(false);
+            infoPanels[8].SetActive(true);
+            buttons.SetActive(true);
+            tutorialButtons[1].interactable = false;
+            tutorialButtons[2].interactable = false;
+            nextButton.SetActive(false);
+        }
+        if (counter == 9)
+        {
+            disableButtons();
+            infoPanels[8].SetActive(false);
+            infoPanels[9].SetActive(true);
+            nextButton.SetActive(true);
+        }
+        if (counter == 10)
+        {
+            infoPanels[9].SetActive(false);
+            infoPanels[10].SetActive(true);
+        }
+        if (counter == 11)
+        {
+            stepPressed = 4;
+            stateFields[2].text = "q1, b, L";
+            stateFields[3].text = "q1, 0, L";
+            nextButton.SetActive(false);
+            tutorialButtons[0].interactable = true;
+
+            infoPanels[10].SetActive(false);
+            infoPanels[11].SetActive(true);
+        }
+
+        if (counter == 12)
+        {
+            nextButton.SetActive(true);
+            tutorialButtons[0].interactable = false;
+
+            infoPanels[11].SetActive(false);
+            infoPanels[12].SetActive(true);
+        }
+
+        if (counter == 13)
+        {
+            stepPressed = 3;
+            stateFields[5].text = "q2, b, R";
+            infoPanels[12].SetActive(false);
+            infoPanels[13].SetActive(true);
+
+            nextButton.SetActive(false);
+            tutorialButtons[0].interactable = true;
+
+        }
+        if (counter == 14)
+        {
+            tutorialButtons[0].interactable = false;
+            infoPanels[13].SetActive(false);
+            infoPanels[14].SetActive(true);
+
+            nextButton.SetActive(true);
+
+        }
+
+        if (counter == 15)
+        {
+            nextButton.SetActive(false);
+
+            inputFields[1].GetComponent<Button>().interactable = true;
+            infoPanels[14].SetActive(false);
+            infoPanels[15].SetActive(true);
+
+        }
+
+        if (counter == 16)
+        {
+            tutorialButtons[2].interactable = true;
+
+            infoPanels[15].SetActive(false);
+            infoPanels[16].SetActive(true);
+
+        }
+
+        if (counter == 17)
+        {
+            foreach (var i in inputFields)
+            {
+                i.GetComponent<Button>().interactable = true;
+            }
+
+            infoPanels[16].SetActive(false);
+            infoPanels[17].SetActive(true);
+
+        }
+    }
+    private void disableButtons()
+    {
+        foreach (var i in tutorialButtons)
+        {
+            i.interactable = false;
+        }
+    }
     public void instantiateInput()
     {
+
         foreach (var i in inputCellList)
         {
             Destroy(i);
@@ -71,68 +270,40 @@ public class UI : MonoBehaviour
     }
     public void Start()
     {
-       // this.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1600, 900);
+        foreach (var i in stateFields)
+        {
+            i.interactable = false;
+        }
+        foreach (var i in inputFields)
+        {
+            i.GetComponent<Button>().interactable = false;
+        }
+        // this.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1600, 900);
         audioMan = FindObjectOfType<AudioManager>();
-        isFreeMode = PlayerPrefs.GetInt("isFreeMode");
-        level = GameObject.Find("SceneLoader").GetComponent<SceneLoader>().level;
-        if (isFreeMode == 0)
+
+        for (int i = 0; i < inputFields.Count; i++)
         {
-            for (int i = 0; i < inputFields.Count; i++)
-            {
-                inputFields[i].text = level.exampleInputList[i];
-            }
-            onInputStringChange("0");
-            FillSavedStateFunctions(saveData.getStateFunctions(level.level));
-
-            lastSavedFunctions = saveData.getStateFunctions(level.level);
-            HighlightCell(turingMachine.getPointer());
-
-
-            var TmpObject = GameObject.Find("Task Description");
-            var TMP = TmpObject.GetComponent<TMP_Text>();
-            TMP.text = level.levelDescription;
-
-            var TmpObjectTitle = GameObject.Find("Task Title");
-            var TMPTitle = TmpObjectTitle.GetComponent<TMP_Text>();
-            TMPTitle.text = "Level " + level.level + " Task";
+            inputFields[i].text = "1111";
         }
-        else
-        {
-            lastSavedFunctions = saveData.getStateFunctions(16);
-            FillSavedStateFunctions(saveData.getStateFunctions(16));
-            onStartFreeMode();
-        }
+        onInputStringChange("0");
+        HighlightCell(turingMachine.getPointer());
+
+        var TmpObject = GameObject.Find("Task Description");
+        var TMP = TmpObject.GetComponent<TMP_Text>();
+        TMP.text = "Create a set of state functions that would replace all 1's and 0's in the data row to only 0's. The same functions have to work with every given input row!";
+
+        var TmpObjectTitle = GameObject.Find("Task Title");
+        var TMPTitle = TmpObjectTitle.GetComponent<TMP_Text>();
+        TMPTitle.text = "Level " + 0 + " Task";
+
+        inputOutputTable.SetActive(false);
+        rightMenu.SetActive(false);
+        buttons.SetActive(false);
+        stateFuncTable.SetActive(false);
+        dataRow.SetActive(false);
+
     }
 
-    private void FillSavedStateFunctions(List<StateFunction> sfList)
-    {
-        for (int i = 0; i < sfList.Count; i++)
-        {
-            for (int j = 0; j < stateFields.Count; j++)
-            {
-                string gameObjectName = stateFields[j].name.ToString();
-
-                if (Char.IsDigit(gameObjectName[1]))
-                {
-
-                    if (sfList[i].getTriggerValue() == gameObjectName[9] && sfList[i].getTriggerState() == int.Parse((gameObjectName[0] - '0').ToString() + (gameObjectName[1] - '0').ToString()))
-                    {
-                        stateFields[j].text = "q" + sfList[i].getOutputState().ToString() + ", " + sfList[i].getOutputValue().ToString() + ", " + sfList[i].getAction().ToString();
-                    }
-                }
-                else
-                {
-                    if (sfList[i].getTriggerValue() == gameObjectName[8] && sfList[i].getTriggerState() == (gameObjectName[0] - '0'))
-                    {
-                        stateFields[j].text = "q" + sfList[i].getOutputState().ToString() + ", " + sfList[i].getOutputValue().ToString() + ", " + sfList[i].getAction().ToString();
-                    }
-                }
-
-            }
-
-        }
-
-    }
     private string formatOutput(string output)
     {
         int pointer = turingMachine.getPointer();
@@ -169,6 +340,11 @@ public class UI : MonoBehaviour
         HighlightCell(turingMachine.getPointer());
         finalStateReachedCounter = 0;
 
+        if (counter == 15)
+        {
+            onNext();
+        }
+
     }
     public void highlightState(int state)
     {
@@ -185,13 +361,10 @@ public class UI : MonoBehaviour
     }
     public void checkOutput()
     {
+
         string output = formatOutput(new string(turingMachine.GetOutputList().ToArray()));
-        if (output == level.exampleOutputList[currentInputRow])
+        if (output == "0000")
         {
-            audioMan.Stop("Menu");
-            audioMan.Stop("Final");
-            audioMan.Stop("Step");
-            audioMan.Play("Row");
             results[currentInputRow] = true;
             inputFields[currentInputRow].fontStyle = FontStyles.Strikethrough;
 
@@ -204,12 +377,11 @@ public class UI : MonoBehaviour
             {
                 audioMan.Play("GG");
                 wasWinScreenShown = true;
-                saveData.PassLevel(level.level);
                 GetComponent<InGameMenu>().onWin();
             }
             if (firstLevelHelps > 0)
             {
-                ShowPopup2("Good job on getting the right answer for your first input row. Now select a different input!");
+                ShowPopup2("Good job on getting the right answer for your first input row!");
                 firstLevelHelps--;
             }
         }
@@ -249,22 +421,10 @@ public class UI : MonoBehaviour
     public void onSaveExit()
     {
         audioMan.Play("Menu");
-        dataReader.SetStateFields(stateFields);
-        dataReader.ReadStateFields();
-        if (isFreeMode == 1)
-            saveData.setStateFuctions(dataReader.GetStateFunctions(), 16);
-        else
-            saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
         SceneManager.LoadScene(0);
     }
     public void onExitWithoutSave()
     {
-        if (isFreeMode == 0)
-        {
-            saveData.setStateFuctions(lastSavedFunctions, level.level);
-        }
-        else
-            saveData.setStateFuctions(lastSavedFunctions, 16);
         audioMan.Play("Menu");
         SceneManager.LoadScene(0);
     }
@@ -305,11 +465,11 @@ public class UI : MonoBehaviour
         {
             for (int i = 0; i < last.Count; i++)
             {
-                if(last[i].getAction() != current[i].getAction() ||
-                    last[i].getOutputState() != current[i].getOutputState() ||
-                    last[i].getOutputValue() != current[i].getOutputValue() ||
-                    last[i].getTriggerState() != current[i].getTriggerState() || 
-                    last[i].getTriggerValue() != current[i].getTriggerValue())
+                if (last[i].getAction() != current[i].getAction() ||
+                  last[i].getOutputState() != current[i].getOutputState() ||
+                  last[i].getOutputValue() != current[i].getOutputValue() ||
+                  last[i].getTriggerState() != current[i].getTriggerState() ||
+                  last[i].getTriggerValue() != current[i].getTriggerValue())
                 {
                     return false;
                 }
@@ -321,7 +481,7 @@ public class UI : MonoBehaviour
     {
         if (!isFirstRun)
         {
-            if(results.Contains(true))
+            if (results.Contains(true))
                 ShowPopup2("Passed input rows were cleared because state functions have changed!");
             for (int i = 0; i < results.Count; i++)
             {
@@ -340,6 +500,8 @@ public class UI : MonoBehaviour
     public void onStep()
     {
         audioMan.Play("Step");
+
+        stepPressed--;
         var last = new List<StateFunction>();
         foreach (var i in dataReader.GetStateFunctions())
         {
@@ -356,8 +518,7 @@ public class UI : MonoBehaviour
 
         bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
 
-
-        if (!isIdentical && isFreeMode == 0)
+        if (!isIdentical)
             StateFunctionsChanged();
 
         if (checkDataErrors(errors))
@@ -386,15 +547,10 @@ public class UI : MonoBehaviour
             {
                 inputCellList[i].GetComponentInChildren<TMP_Text>().text = outputList[i].ToString();
             }
-            if (isFreeMode == 0)
-                onOutputChange();
+            onOutputChange();
             HighlightCell(turingMachine.getPointer());
             highlightState(turingMachine.getState());
 
-            if (isFreeMode == 1)
-                saveData.setStateFuctions(dataReader.GetStateFunctions(), 16);
-            else
-                saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
             if (machineResult == 1) //final state reached
             {
                 finalStateReachedCounter++;
@@ -405,13 +561,19 @@ public class UI : MonoBehaviour
                 checkOutput();
             }
 
-            if(finalStateReachedCounter > 3)
+            if (finalStateReachedCounter > 3)
             {
                 ShowPopup2("Consider resetting the input by clicking on one of the input rows.");
                 finalStateReachedCounter = 0;
             }
 
         }
+
+        if (stepPressed == 0)
+        {
+            onNext();
+        }
+
     }
     public void HighlightCell(int cell)
     {
@@ -450,15 +612,14 @@ public class UI : MonoBehaviour
             dataReader.SetStateFields(stateFields);
             var errors = dataReader.ReadStateFields();
 
-
             if (dataReader.GetStateFunctions().Count == 0)
             {
                 ShowError("The state function table is empty!");
             }
 
             bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
-             
-            if (!isIdentical && isFreeMode == 0)
+
+            if (!isIdentical)
                 StateFunctionsChanged();
 
             if (checkDataErrors(errors))
@@ -467,10 +628,6 @@ public class UI : MonoBehaviour
 
                 turingMachine.SetOutputList(inputList);
                 turingMachine.SetStateFunctions(stateFunctions);
-                if (isFreeMode == 1)
-                    saveData.setStateFuctions(dataReader.GetStateFunctions(), 16);
-                else
-                    saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
                 StartCoroutine("allStepsWithDelay");
             }
         }
@@ -500,29 +657,18 @@ public class UI : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftControl))
         {
-                if (Input.GetKeyUp(KeyCode.Alpha1))  //step shortcut
-                {
-                    onStep();
-                }
-                if (Input.GetKeyUp(KeyCode.Alpha2))  //fast shortcut
-                {
-                    onFastSteps();
-                }
-                if (Input.GetKeyUp(KeyCode.Alpha3))  //skip shortcut
-                {
-                    onSkipSteps();
-                }
-            if (Input.GetKeyUp(KeyCode.Alpha4))  //skip shortcut
+            if (Input.GetKeyUp(KeyCode.Alpha1)) //step shortcut
             {
-
-                for(int i = 0; i< 8; i++)
-                {
-                    onInputStringChange(i.ToString());
-                    onSkipSteps();
-                }
-
+                onStep();
             }
-
+            if (Input.GetKeyUp(KeyCode.Alpha2)) //fast shortcut
+            {
+                onFastSteps();
+            }
+            if (Input.GetKeyUp(KeyCode.Alpha3)) //skip shortcut
+            {
+                onSkipSteps();
+            }
         }
     }
     public IEnumerator allStepsWithDelay()
@@ -532,7 +678,7 @@ public class UI : MonoBehaviour
         while (returnValue != 1)
         {
             returnValue = turingMachine.oneStep();
-                audioMan.Play("Step");
+            audioMan.Play("Step");
             if (returnValue == -1)
             {
                 ShowError("You are moving the pointer out of the game bounds." +
@@ -546,8 +692,7 @@ public class UI : MonoBehaviour
                 inputCellList[i].GetComponentInChildren<TMP_Text>().text = outputList[i].ToString();
             }
             HighlightCell(turingMachine.getPointer());
-            if (isFreeMode == 0)
-                onOutputChange();
+            onOutputChange();
             if (returnValue == 1) //final state reached
             {
                 audioMan.Stop("Menu");
@@ -561,7 +706,8 @@ public class UI : MonoBehaviour
                     finalStateReachedCounter = 0;
                 }
             }
-            yield return new WaitForSeconds(0.8f);
+            yield
+            return new WaitForSeconds(0.8f);
         }
         isFastExectionRunning = false;
 
@@ -587,7 +733,7 @@ public class UI : MonoBehaviour
 
         bool isIdentical = CompareStateFunctionLists(last, dataReader.GetStateFunctions());
 
-        if (!isIdentical && isFreeMode == 0)
+        if (!isIdentical)
             StateFunctionsChanged();
 
         if (checkDataErrors(errors))
@@ -601,12 +747,8 @@ public class UI : MonoBehaviour
                 StopCoroutine("allStepsWithDelay");
                 isFastExectionRunning = false;
             }
-            if (isFreeMode == 1)
-                saveData.setStateFuctions(dataReader.GetStateFunctions(), 16);
-            else
-                saveData.setStateFuctions(dataReader.GetStateFunctions(), level.level);
             int machineResult = turingMachine.allSteps();
-                audioMan.Play("Final");
+            audioMan.Play("Final");
             if (machineResult == -1)
             {
                 audioMan.Stop("Final");
@@ -620,7 +762,7 @@ public class UI : MonoBehaviour
             }
 
             ShowPopup("Final state reached!");
-                finalStateReachedCounter++;
+            finalStateReachedCounter++;
             if (finalStateReachedCounter > 3)
             {
                 ShowPopup2("Consider resetting the input by clicking on one of the input rows.");
@@ -631,35 +773,11 @@ public class UI : MonoBehaviour
             {
                 inputCellList[i].GetComponentInChildren<TMP_Text>().text = outputList[i].ToString();
             }
-            if (isFreeMode == 0)
-                onOutputChange();
+            onOutputChange();
             checkOutput();
             HighlightCell(turingMachine.getPointer());
         }
-
-    }
-    public void onRestart()
-    {
-        inputString = binaryInput.text;
-        inputString = dataReader.ReadBinaryInput(inputString);
-            if (inputString == "")
-            {
-                ShowError("Non binary input!");
-            }
-        inputString = "bb" + inputString + "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
-        inputList.Clear();
-        inputList.AddRange(inputString);
-        instantiateInput();
-        HighlightCell(2);
-        highlightState(0);
-    }
-    private void onStartFreeMode()
-    {
-        inputString = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
-        inputList.Clear();
-        inputList.AddRange(inputString);
-        instantiateInput();
-        HighlightCell(2);
-        highlightState(0);
+        if (counter == 16)
+            onNext();
     }
 }

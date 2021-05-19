@@ -742,8 +742,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12
-  m_fontSizeBase: 12
+  m_fontSize: 13
+  m_fontSizeBase: 13
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -25770,7 +25770,6 @@ MonoBehaviour:
   - {fileID: 165164170}
   - {fileID: 1751860206}
   - {fileID: 32168063}
-  stateFunctions: []
   stateNameFields:
   - {fileID: 3170764225200187039}
   - {fileID: 3170764225235989160}
@@ -25807,14 +25806,12 @@ MonoBehaviour:
   - {fileID: 1573668717}
   - {fileID: 536624627}
   - {fileID: 2005328253}
-  results: 0000000000000000
   inputCell: {fileID: 1998053393889789969, guid: 9c92df5fa09f75b4aa647824e9f65409,
     type: 3}
   errorPanel: {fileID: 1980635797}
   saveData: {fileID: 1952998668}
   popup: {fileID: 2114014426}
   popup2: {fileID: 497850809}
-  freeModeInput: {fileID: 0}
   isFreeMode: 0
 --- !u!114 &1438891054
 MonoBehaviour:
@@ -34000,7 +33997,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: Immediately performs all state functions until the final one is reached (Ctrl
-    + 3)
+    + 3). Pressing Ctrl + 4 performs all input rows at once
 --- !u!1 &1961853608
 GameObject:
   m_ObjectHideFlags: 0
@@ -35748,7 +35745,6 @@ GameObject:
   - component: {fileID: 2029431789}
   - component: {fileID: 2029431788}
   - component: {fileID: 2029431787}
-  - component: {fileID: 2029431791}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -35866,32 +35862,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2029431785}
   m_CullTransparentMesh: 0
---- !u!61 &2029431791
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2029431785}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 80, y: 80}
-  m_EdgeRadius: 0
 --- !u!1 &2046917948
 GameObject:
   m_ObjectHideFlags: 0
