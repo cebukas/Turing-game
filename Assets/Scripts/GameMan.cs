@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 
-public class GameLogic : MonoBehaviour
+public class GameMan : MonoBehaviour
 {
     public TMP_InputField binaryInput;
     public List<TMP_InputField> stateFields = new List<TMP_InputField>();
@@ -48,7 +48,7 @@ public class GameLogic : MonoBehaviour
     private int finalStateReachedCounter = 0;
 
     List<StateFunction> lastSavedFunctions = new List<StateFunction>();
-    public void instantiateInput()
+    public void InstantiateInput()
     {
         foreach (var i in inputCellList)
         {
@@ -133,7 +133,7 @@ public class GameLogic : MonoBehaviour
         }
 
     }
-    private string formatOutput(string output)
+    private string FormatOutput(string output)
     {
         int pointer = turingMachine.getPointer();
         if (pointer < 0)
@@ -150,7 +150,7 @@ public class GameLogic : MonoBehaviour
     }
     public void onOutputChange()
     {
-        outputFields[currentInputRow].text = formatOutput(new string(turingMachine.GetOutputList().ToArray()));
+        outputFields[currentInputRow].text = FormatOutput(new string(turingMachine.GetOutputList().ToArray()));
     }
     public void onInputStringChange(string inputNumber)
     {
@@ -158,8 +158,8 @@ public class GameLogic : MonoBehaviour
         inputString = "bb" + inputFields[currentInputRow].text + "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
         inputList.Clear();
         inputList.AddRange(inputString);
-        instantiateInput();
-        highlightState(0);
+        InstantiateInput();
+        HighlightState(0);
 
         if (isFastExectionRunning)
         {
@@ -170,7 +170,7 @@ public class GameLogic : MonoBehaviour
         finalStateReachedCounter = 0;
 
     }
-    public void highlightState(int state)
+    public void HighlightState(int state)
     {
         if (state != -1 && state <= 16)
         {
@@ -183,9 +183,9 @@ public class GameLogic : MonoBehaviour
             stateNameFields[state].fontSize = stateNameFields[state].fontSize + 5;
         }
     }
-    public void checkOutput()
+    public void CheckOutput()
     {
-        string output = formatOutput(new string(turingMachine.GetOutputList().ToArray()));
+        string output = FormatOutput(new string(turingMachine.GetOutputList().ToArray()));
         if (output == level.exampleOutputList[currentInputRow])
         {
             audioMan.Stop("Menu");
@@ -269,7 +269,7 @@ public class GameLogic : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
-    private bool checkDataErrors(List<int> errors)
+    private bool CheckDataErrors(List<int> errors)
     {
         if (errors.Count != 0)
         {
@@ -360,7 +360,7 @@ public class GameLogic : MonoBehaviour
         if (!isIdentical && isFreeMode == 0)
             StateFunctionsChanged();
 
-        if (checkDataErrors(errors))
+        if (CheckDataErrors(errors))
         {
             stateFunctions = dataReader.GetStateFunctions();
 
@@ -389,7 +389,7 @@ public class GameLogic : MonoBehaviour
             if (isFreeMode == 0)
                 onOutputChange();
             HighlightCell(turingMachine.getPointer());
-            highlightState(turingMachine.getState());
+            HighlightState(turingMachine.getState());
 
             if (isFreeMode == 1)
                 saveData.setStateFuctions(dataReader.GetStateFunctions(), 16);
@@ -402,7 +402,7 @@ public class GameLogic : MonoBehaviour
                 audioMan.Stop("Step");
                 audioMan.Play("Final");
                 ShowPopup("Final state reached!");
-                checkOutput();
+                CheckOutput();
             }
 
             if(finalStateReachedCounter > 3)
@@ -424,7 +424,6 @@ public class GameLogic : MonoBehaviour
 
     public void ShowError(string error)
     {
-
         audioMan.Stop("Menu");
         audioMan.Play("Error");
         errorPanel.SetActive(true);
@@ -461,7 +460,7 @@ public class GameLogic : MonoBehaviour
             if (!isIdentical && isFreeMode == 0)
                 StateFunctionsChanged();
 
-            if (checkDataErrors(errors))
+            if (CheckDataErrors(errors))
             {
                 stateFunctions = dataReader.GetStateFunctions();
 
@@ -553,7 +552,7 @@ public class GameLogic : MonoBehaviour
                 audioMan.Stop("Menu");
                 audioMan.Play("Final");
                 ShowPopup("Final state reached!");
-                checkOutput();
+                CheckOutput();
                 finalStateReachedCounter++;
                 if (finalStateReachedCounter > 3)
                 {
@@ -590,7 +589,7 @@ public class GameLogic : MonoBehaviour
         if (!isIdentical && isFreeMode == 0)
             StateFunctionsChanged();
 
-        if (checkDataErrors(errors))
+        if (CheckDataErrors(errors))
         {
             stateFunctions = dataReader.GetStateFunctions();
 
@@ -633,7 +632,7 @@ public class GameLogic : MonoBehaviour
             }
             if (isFreeMode == 0)
                 onOutputChange();
-            checkOutput();
+            CheckOutput();
             HighlightCell(turingMachine.getPointer());
         }
 
@@ -649,17 +648,17 @@ public class GameLogic : MonoBehaviour
         inputString = "bb" + inputString + "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
         inputList.Clear();
         inputList.AddRange(inputString);
-        instantiateInput();
+        InstantiateInput();
         HighlightCell(2);
-        highlightState(0);
+        HighlightState(0);
     }
     private void onStartFreeMode()
     {
         inputString = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
         inputList.Clear();
         inputList.AddRange(inputString);
-        instantiateInput();
+        InstantiateInput();
         HighlightCell(2);
-        highlightState(0);
+        HighlightState(0);
     }
 }
