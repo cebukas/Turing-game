@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 
-public class UI : MonoBehaviour
+public class GameLogic : MonoBehaviour
 {
     public TMP_InputField binaryInput;
     public List<TMP_InputField> stateFields = new List<TMP_InputField>();

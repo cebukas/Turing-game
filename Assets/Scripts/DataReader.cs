@@ -2,8 +2,6 @@
 using System.Text.RegularExpressions;
 using TMPro;
 using System;
-using UnityEngine;
-
 public class DataReader
 {
     private List<TMP_InputField> stateFields = new List<TMP_InputField>();

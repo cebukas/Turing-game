@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
-
 public class TuringMachine
 {
     private int pointer = 2;

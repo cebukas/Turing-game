@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Tutorial2 : MonoBehaviour
+public class Tutorial : MonoBehaviour
 {
     public List<TMP_InputField> stateFields = new List<TMP_InputField>();
     private List<StateFunction> stateFunctions = new List<StateFunction>();
