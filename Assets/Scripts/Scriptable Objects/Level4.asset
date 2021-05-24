@@ -17,7 +17,7 @@ MonoBehaviour:
     the input
   helpList:
   - The expected output for the first second row is 000000
-  - '-'
+  - You will first have to reach the last input symbol
   turingFact: In 1950 Alan uring suggested a test that would measure the intellect
     of a computer. In the test, the human participant has to communicate with a computer
     and another person using written language. All participants have to remain in

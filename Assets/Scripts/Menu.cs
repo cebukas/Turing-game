@@ -14,6 +14,7 @@ public class Menu : MonoBehaviour
     public GameObject settingsPanel;
     public GameObject backFromSettings;
     public GameObject soundButton;
+
     public TMP_Text turingText;
 
     public GameObject backCampaign;
@@ -42,25 +43,25 @@ public class Menu : MonoBehaviour
         levels = saveData.GetLevels();
     }
     public void onPlay(){
-            audioMan.Play("Menu");
+        audioMan.Play("Menu");
         playMenu.SetActive(true);
         mainMenu.SetActive(false);
 
     }
      public void onBack(){
-            audioMan.Play("Menu");
+        audioMan.Play("Menu");
         playMenu.SetActive(false);
         mainMenu.SetActive(true);
     }
-        public void onSettings() {
-            audioMan.Play("Menu");
+    public void onSettings() {
+        audioMan.Play("Menu");
         backFromSettings.SetActive(true);
         settingsPanel.SetActive(true);
         mainMenu.SetActive(false);
     }
     public void onSettingsBack()
     {
-            audioMan.Play("Menu");
+        audioMan.Play("Menu");
         settingsPanel.SetActive(false);
         mainMenu.SetActive(true);
         backFromSettings.SetActive(false);
@@ -68,7 +69,7 @@ public class Menu : MonoBehaviour
 
     public void onSound()
     {
-            audioMan.Play("Menu");
+        audioMan.Play("Menu");
 
         var tmpObject = soundButton.GetComponentInChildren<TMP_Text>();
 
@@ -84,13 +85,12 @@ public class Menu : MonoBehaviour
             PlayerPrefs.SetInt("sound", 1);
         }
     }
-        public void onFacts(){
-            audioMan.Play("Menu");
+    public void onFacts(){
+        audioMan.Play("Menu");
         levels = saveData.GetLevels();
         backFacts.SetActive(true);
         turingFactsMenu.SetActive(true);
         mainMenu.SetActive(false);
-
 
         for (int i = 0; i < 15; i++)
         {
@@ -124,23 +124,23 @@ public class Menu : MonoBehaviour
     }
     public void onFactsBack()
     {
-            audioMan.Play("Menu");
+        audioMan.Play("Menu");
         backFacts.SetActive(false);
         turingFactsMenu.SetActive(false);
         mainMenu.SetActive(true);
     }
      public void onFreeMode(){
-            audioMan.Play("Menu");
+        audioMan.Play("Menu");
         PlayerPrefs.SetInt("isFreeMode", 1);
         SceneManager.LoadScene(3);
     }
-        public void onExit(){
-            audioMan.Play("Menu");
+    public void onExit(){
+        audioMan.Play("Menu");
         Application.Quit();
     }
     public void onCampaign()
     {
-            audioMan.Play("Menu");
+        audioMan.Play("Menu");
         levels = saveData.GetLevels();
         backCampaign.SetActive(true);
         playMenu.SetActive(false);
@@ -193,32 +193,39 @@ public class Menu : MonoBehaviour
     }
     public void onLoadLevel(string level)
     {
-            audioMan.Play("Menu");
         if (checkIfPlayable(int.Parse(level) - 1))
         {
+            audioMan.Play("Menu");
             PlayerPrefs.SetInt("isFreeMode", 0);
             PlayerPrefs.SetInt("Level", int.Parse(level));
             SceneManager.LoadScene(1);
         }
+        else
+        {
+            audioMan.Play("Error");
+        }
     }
     public void onLoadFact(string fact)
     {
-            audioMan.Play("Menu");
         if (levels[int.Parse(fact) - 1] != false)
         {
+            audioMan.Play("Menu");
             turingFactPanel.SetActive(true);
             turingText.text = levelListSO[int.Parse(fact) - 1].turingFact;
-
+        }
+        else
+        {
+            audioMan.Play("Error");
         }
     }
     public void onExitFact()
     {
-            audioMan.Play("Menu");
+        audioMan.Play("Menu");
         turingFactPanel.SetActive(false);
     }
     public void onBackFromCampaign()
     {
-            audioMan.Play("Menu");
+        audioMan.Play("Menu");
         backCampaign.SetActive(false);
         campaignMenu.SetActive(false);
         playMenu.SetActive(true);

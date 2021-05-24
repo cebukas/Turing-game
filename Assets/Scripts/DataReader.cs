@@ -2,7 +2,6 @@
 using System.Text.RegularExpressions;
 using TMPro;
 using System;
-
 public class DataReader
 {
     private List<TMP_InputField> stateFields = new List<TMP_InputField>();
@@ -37,13 +36,16 @@ public class DataReader
                 stateFunction.setTriggerValue(gameObjectName[8]);
             }
 
-            Regex regex = new Regex(@"q\d+\s*(,)\s*[01b]{1}\s*(,)\s*[RLN]");
+            Regex regex = new Regex(@"[Qq]\d+\s*(,)\s*[01b]{1}\s*(,)\s*[RLNrln]");
 
             Match match = regex.Match(stateFields[i].text);
 
             if (match.Success)
             {
                 string trim = stateFields[i].text.Replace(" ", "");
+                trim = trim.ToUpper();
+                trim = trim.Replace("B", "b");
+
                 string[] inputValues = trim.Split(','); // input format should be 'q0, 0, R' or 'q0,0,R' or 'q10, 0, R'
                
                 if (inputValues[0].Length == 3)

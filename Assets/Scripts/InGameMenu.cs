@@ -106,8 +106,6 @@ public class InGameMenu : MonoBehaviour
     {
         audioMan.Play("Menu");
         taskPanel.SetActive(true);
-
-
     }
     public void onTaskClose()
     {
