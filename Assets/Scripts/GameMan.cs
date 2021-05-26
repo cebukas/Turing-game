@@ -545,6 +545,7 @@ public class GameMan : MonoBehaviour
                 inputCellList[i].GetComponentInChildren<TMP_Text>().text = outputList[i].ToString();
             }
             HighlightCell(turingMachine.getPointer());
+            HighlightState(turingMachine.getState());
             if (isFreeMode == 0)
                 onOutputChange();
             if (returnValue == 1) //final state reached
