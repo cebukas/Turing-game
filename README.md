@@ -6,3 +6,7 @@ To open the project in Unity, open the whole folder as a project through Unity H
 
 Note:
 For now, the UI of the game is designed for 1920x1080 resolution, there might be some issues using a different resolution.
+
+Short gameplay:
+https://user-images.githubusercontent.com/42977685/119659095-82637680-be36-11eb-9bb5-bc3fbf07e56e.mp4
+
